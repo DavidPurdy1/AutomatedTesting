@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using log4net;
+﻿using log4net;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using System;
@@ -9,9 +8,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
-
-namespace ConsoleTests.src
-{
+namespace ConsoleTests.src {
     /// <summary>
     /// Class contains methods to create new document, definition, or type
     /// </summary>
@@ -186,11 +183,11 @@ namespace ConsoleTests.src
         ///<para>Creation of Documents</para>
         ///<para>numOfDocs: specifies how many to create, isPDF: pdf or tif,docPath: allows you to specify the directory of docs, default is set in config, filenumber: which document in a certain directory </para>
         ///</summary>
-        public List<string> CreateDocumentWithCheck(TestCaseObject tcase, int? numOfDocs = 1, bool isPDF = true, string docPath = "", int? fileNumber = 0)
+        public void CreateDocumentWithCheck(TestCaseObject tcase, int? numOfDocs = 1, bool isPDF = true, string docPath = "", int? fileNumber = 0)
         {
             method = MethodBase.GetCurrentMethod().Name;
             Print(method, "Started");
-            List<string> documentIds = new List<string>();
+
             //check if maximized
             window = m.Locate(By.Id("frmIntactMain"));
             if (m.IsElementPresent(By.Name("Maximize"), window))
@@ -221,11 +218,15 @@ namespace ConsoleTests.src
                 //edit custom fields
                 Print(method, "custom fields");
                 m.Click(By.Id("lblType"));
-                //get the test case number and that is going to be the metadata field for the number
-                var date = DateTime.Now.Date;
-                string number = "7";
-                action.MoveByOffset(150, 240).Click().SendKeys(date.ToString()).
-                    MoveByOffset(0, 20).Click().SendKeys(tcase.TestCaseId.ToString()).
+
+                var date = DateTime.Now.Date.ToString();
+                var num = new Random().Next().ToString(); 
+                document.CustomFieldData.Add(date);
+                document.CustomFieldData.Add(num);
+                document.CustomFieldData.Add(document.DocumentId); 
+
+                action.MoveByOffset(150, 240).Click().SendKeys(date).
+                    MoveByOffset(0, 20).Click().SendKeys(num).
                     MoveByOffset(0, 20).Click().SendKeys(document.DocumentId).Build().Perform();
 
                 //add author as the tester name
@@ -233,6 +234,7 @@ namespace ConsoleTests.src
                 // action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("BATCH AUTHOR TEST").
                 //     MoveByOffset(0, 40).Click().SendKeys("BATCH ADDING TO ANOTHER DOCUMENT TEST").Build().Perform();
                 //save and quit
+
                 Print(method, "save and quit");
                 m.Click(By.Id("btnSave"));
                 window = m.Locate(By.Name("File Document"));
@@ -244,9 +246,8 @@ namespace ConsoleTests.src
                 Print(method, "Finished the document addition");
                 Thread.Sleep(5000);
                 tcase.AddDocument(document); 
-               // new DataRetrieval(debugLog).ValidateDocumentAdd(guid, date, number);
+                new SQLDataHandler().ValidateDocumentAdd(document);
             }
-            return documentIds;
         }
         //find the document to add in file explorer
         //configure docpath in app.config, takes arg of pdf or tif 

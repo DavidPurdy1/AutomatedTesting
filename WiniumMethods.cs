@@ -1,13 +1,11 @@
-﻿using System.Diagnostics;
-using log4net;
+﻿using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Winium;
 using System;
 using System.Reflection;
 
-namespace ConsoleTests.src
-{
+namespace ConsoleTests.src {
     /// <summary>
     /// Class containing methods used to locate elements, interact with the form, and driver actions
     /// </summary>
@@ -172,24 +170,6 @@ namespace ConsoleTests.src
         public bool IsElementPresent(By by, IWebElement parent)
         {
             return parent.FindElements(by).Count > 0;
-        }
-        /// <summary>Gets top level window: the only info type that can be specified is "process"</summary>
-        /// <returns>string: the name of the process or title of the window</returns>
-        public string GetTopLevelWindowInformation(string infotype)
-        {
-            WindowActions data = new WindowActions();
-            data.GetActiveWindow();
-
-            if (infotype.Equals("process"))
-            {
-                return data.WindowProcess;
-            }
-            return data.WindowTitle;
-        }
-        public void SetTopLevelWindow(Process p)
-        {
-            Print(MethodBase.GetCurrentMethod().Name, "Process: {" + p.ProcessName + "} ID: {" + p.Id + "} Window title: {" + p.MainWindowTitle + "}");
-            new WindowActions().SetAsActiveWindow(p);
         }
         public Screenshot GetScreenshot()
         {

@@ -1,13 +1,12 @@
-using System.Diagnostics;
 using System.Collections.Generic;
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using log4net;
-using ConsoleTests.src;
 using Newtonsoft.Json;
+using AutomatedTestingLib;
+using ConsoleTests.src;
 
-namespace ConsoleTests
-{
+namespace ConsoleTests {
     /// <summary>
     /// Test Case containing Data at the Test Case level and functions of a Test Case
     /// </summary>
@@ -25,19 +24,17 @@ namespace ConsoleTests
         public List<DocumentObject> Documents { get; set; } = new List<DocumentObject>();
         #endregion
 
+        /// <summary>
+        ///Initializes values and closes any previous Intact instances
+        /// </summary>
         public TestCaseObject()
         {
-            foreach (Process p in Process.GetProcessesByName("Intact"))
-            {
-                p.Kill();
-            }
+            WindowProcessHandler.CloseIntact(); 
             CreatedDate = DateTime.Now;
-            GetAndSetTestCaseId();
         }
-
-        private void GetAndSetTestCaseId() {
-            TestCaseId = new DataRetrieval().GetTestCaseId();
-        }
+        /// <summary>
+        /// Adds the test result, name, and takes and saves the screenshot if failed and sets image path
+        /// </summary>
         public void AddTestCaseResult(UnitTestOutcome result, string testName)
         {
             TestName = testName;
@@ -54,25 +51,24 @@ namespace ConsoleTests
             else
             {
                 TestStatus = 3;
-                //imagePaths.Add(user.Cleanup().TakeScreenshot(TestContext.TestName) + ".PNG");
+                ImagePath = ScreenshotHandler.CaptureDesktop(testName); 
                 Print("FAILED *****************************************");
             }
         }
         public void AddDocument(DocumentObject document) {
-            if (Documents.Count > 0) {
-                foreach (var doc in Documents) {
-                    doc.TestCaseId = TestCaseId;
-                }
-            }
+            Documents.Add(document); 
         }
-        public void TestCaseCleanup() {
-            //CommunicateDataValues();
-            //CloseDriver();
+        /// <summary>
+        /// Disposes any error messages that occur and closes the driver
+        /// </summary>
+        public void TestCaseCleanup(UserMethods user) {
+            WindowProcessHandler.DisposeErrorMessages();
+            user.CloseDriver(); 
         }
         public void PrintInfo() {
-            Print(JsonConvert.SerializeObject(this));
+            Print(JsonConvert.SerializeObject(this, Formatting.Indented));
         }
-        public void Print(string toPrint, string method = "")
+        private void Print(string toPrint, string method = "")
         {
             debugLog.Info(method + " " + toPrint);
         }

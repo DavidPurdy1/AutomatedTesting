@@ -66,21 +66,21 @@
     <Compile Include="TestObjects\TestCaseObject.cs" />
     <Compile Include="TestObjects\TestRunObject.cs" />
     <Compile Include="UserMethods.cs" />
-    <Compile Include="UserMethods\Cleanup.cs" />
     <Compile Include="UserMethods\Create.cs" />
     <Compile Include="UserMethods\DataExporter.cs" />
-    <Compile Include="UserMethods\DataRetrieval.cs" />
     <Compile Include="UserMethods\DocumentCollect.cs" />
-    <Compile Include="UserMethods\IntactSetup.cs" />
+    <Compile Include="UserMethods\LoginLogout.cs" />
     <Compile Include="UserMethods\Misc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserMethods\SearchRecognize.cs" />
-    <Compile Include="WindowActions.cs" />
+    <Compile Include="WindowProcessHandler.cs" />
+    <Compile Include="ScreenshotHandler.cs" />
     <Compile Include="WiniumMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

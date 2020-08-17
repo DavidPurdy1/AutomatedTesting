@@ -9,6 +9,7 @@ namespace ConsoleTests
         static readonly ILog debugLog = LogManager.GetLogger("Automated Testing Logs");
         public int TestCaseId { get; set; }
         public string DocumentId { get; set; }
+        public string Type { get; set; }
         public string Title { get; set; }
         public string Author { get; set; }
         public int PageCount { get; set; }
@@ -18,6 +19,7 @@ namespace ConsoleTests
         public DocumentObject() {
             DocumentId = Guid.NewGuid().ToString();
         }
+
         public void PrintInfo() {
             Print(JsonConvert.SerializeObject(this));
         }

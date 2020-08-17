@@ -31,20 +31,14 @@ namespace ConsoleTests.src {
         /// <summary>
         /// Methods that happen at the beginning of a test
         /// </summary>
-        public IntactSetup Setup() {
-            return new IntactSetup(m); 
+        public LoginLogout Login() {
+            return new LoginLogout(m); 
         }
         /// <summary>
         /// Class contains methods to create new document, definition, or type
         /// </summary>
         public Create Create() {
             return new Create(m, action); 
-        }
-        /// <summary>
-        /// Class containing methods used at the end of a test case or test run.
-        /// </summary>
-        public Cleanup Cleanup() {
-            return new Cleanup(m); 
         }
         /// <summary>
         /// Methods that use the Document Collector, BatchReview and InZone
@@ -64,6 +58,10 @@ namespace ConsoleTests.src {
         /// </summary>
         public Misc Misc() {
             return new Misc(m, action); 
+        }
+
+        public void CloseDriver() {
+            m.CloseDriver(); 
         }
         #endregion
 

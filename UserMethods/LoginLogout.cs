@@ -10,21 +10,21 @@ namespace ConsoleTests.src
     /// <summary>
     /// Methods that happen at the beginning of a test
     /// </summary>
-    public class IntactSetup
+    public class LoginLogout
     {
 
         IWebElement window;
         readonly WiniumMethods m;
         static readonly ILog debugLog = LogManager.GetLogger("Automated Testing Logs");
 
-        public IntactSetup(WiniumMethods m)
+        public LoginLogout(WiniumMethods m)
         {
             this.m = m;
         }
+
         /// <summary> Login to Intact: Has to be ran before any other testcase</summary>
         public void Login()
         {
-            Print("intact is starting"); 
             bool needToSetDB = ConfigurationManager.AppSettings.Get("setDataBase") == "true";
             Thread.Sleep(10000);
             m.SendKeys(By.Name(""), "admin");
