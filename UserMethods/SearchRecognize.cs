@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace ConsoleTests.src {
+namespace AutomatedTestingLib {
     /// <summary>
     /// Methods for Search and Recognize Feature
     /// </summary>

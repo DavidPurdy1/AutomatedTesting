@@ -5,8 +5,7 @@ using System.Configuration;
 using System.Threading;
 using log4net; 
 
-namespace ConsoleTests.src
-{
+namespace AutomatedTestingLib {
     /// <summary>
     /// Methods that happen at the beginning of a test
     /// </summary>

@@ -5,7 +5,7 @@ using OpenQA.Selenium.Winium;
 using System;
 using System.Reflection;
 
-namespace ConsoleTests.src {
+namespace AutomatedTestingLib {
     /// <summary>
     /// Class containing methods used to locate elements, interact with the form, and driver actions
     /// </summary>
@@ -162,18 +162,27 @@ namespace ConsoleTests.src {
         /// <summary> Checks if element is on the page by name, id, or class name </summary>
         /// <returns>Bool: If element is present</returns>
         public bool IsElementPresent(By by)
-        {
+        {   
+            try {driver.FindElement(by);
+            } catch(NoSuchElementException) {
+                Print("element not present");
+                return false;
+            }
+            return true;
             return driver.FindElements(by).Count > 0;
         }
         /// <summary> Checks if element is on the page by name, id, or class name specifying parent</summary>
         /// <returns>Bool: If element is present</returns>
         public bool IsElementPresent(By by, IWebElement parent)
         {
+            try {
+                parent.FindElement(by);
+            } catch (NoSuchElementException) {
+                Print("element not present");
+                return false;
+            }
+            return true;
             return parent.FindElements(by).Count > 0;
-        }
-        public Screenshot GetScreenshot()
-        {
-            return ((ITakesScreenshot)driver).GetScreenshot();
         }
         public void CloseDriver()
         {

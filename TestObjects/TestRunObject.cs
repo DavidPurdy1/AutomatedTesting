@@ -2,12 +2,11 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System;
 using System.Configuration;
-using ConsoleTests.src;
 using log4net;
 using Newtonsoft.Json;
 using System.IO;
 
-namespace ConsoleTests
+namespace AutomatedTestingLib
 {
     /// <summary>
     /// Test Run containing Data at the Test Run level and functions of a Test Run

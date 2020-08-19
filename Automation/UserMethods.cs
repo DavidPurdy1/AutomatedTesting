@@ -4,13 +4,12 @@ using OpenQA.Selenium.Winium;
 using System;
 using System.Configuration;
 
-namespace ConsoleTests.src {
+namespace AutomatedTestingLib {
     /// <summary>
     /// Entry point for writing tests
     /// </summary>
     public class UserMethods {
         #region fields
-        readonly DesktopOptions options = new DesktopOptions();
         readonly WiniumDriver driver;
         readonly WiniumMethods m;
         static readonly ILog debugLog = LogManager.GetLogger("Automated Testing Logs");
@@ -19,9 +18,12 @@ namespace ConsoleTests.src {
 
         #region Setup
         public UserMethods() {
-            options.ApplicationPath = ConfigurationManager.AppSettings.Get("IntactPath");
+            DesktopOptions options = new DesktopOptions {
+                ApplicationPath = ConfigurationManager.AppSettings.Get("IntactPath")
+            };
             driver = new WiniumDriver(ConfigurationManager.AppSettings.Get("DriverPath") , options);
-            driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(double.Parse(ConfigurationManager.AppSettings.Get("ImplicitWait"))));
+
+            //driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(double.Parse(ConfigurationManager.AppSettings.Get("ImplicitWait"))));
             action = new Actions(driver);
             m = new WiniumMethods(driver);
         }

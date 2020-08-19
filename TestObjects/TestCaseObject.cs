@@ -3,10 +3,8 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using log4net;
 using Newtonsoft.Json;
-using AutomatedTestingLib;
-using ConsoleTests.src;
 
-namespace ConsoleTests {
+namespace AutomatedTestingLib {
     /// <summary>
     /// Test Case containing Data at the Test Case level and functions of a Test Case
     /// </summary>

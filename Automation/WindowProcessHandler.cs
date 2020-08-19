@@ -5,7 +5,7 @@ using System;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ConsoleTests {
+namespace AutomatedTestingLib {
     /// <summary>
     /// Handles checks for processes running, closing processes, and getting and setting windows 
     /// </summary>
@@ -13,7 +13,7 @@ namespace ConsoleTests {
     {
         static readonly ILog debugLog = LogManager.GetLogger("Automated Testing Logs");
         public string WindowTitle { get; set; }
-        public string WindowProcess { get; set; }
+        public Process WindowProcess { get; set; } 
 
         [DllImport("user32.dll")]
         static extern int GetForegroundWindow();
@@ -43,7 +43,7 @@ namespace ConsoleTests {
 
                 GetWindowThreadProcessId(handle, out uint lpdwProcessId);
 
-                WindowProcess = Process.GetProcessById((int)lpdwProcessId).ProcessName;
+                WindowProcess = Process.GetProcessById((int)lpdwProcessId);
             }
         }
         /// <summary>
@@ -83,8 +83,9 @@ namespace ConsoleTests {
         }
         private void CheckForInterruptions(bool toggleInterruptCheck) {
             if (toggleInterruptCheck) {
-                if (WindowProcess != "Intact") {
-                    Print( WindowProcess + " || " + WindowTitle);
+                GetActiveWindow(); 
+                if (WindowProcess.ProcessName != "Intact") {
+                    Print( WindowProcess.ProcessName + " || " + WindowTitle);
                     Print("The current top window isn't intact, test interrupted");
                     throw new AssertInconclusiveException("The current top window is not intact, test interrupted");
                 }

@@ -2,13 +2,14 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using System;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace ConsoleTests.src {
+namespace AutomatedTestingLib {
     /// <summary>
     /// Methods that use the Document Collector, BatchReview and InZone
     /// </summary>
@@ -17,97 +18,125 @@ namespace ConsoleTests.src {
         readonly WiniumMethods m;
         string method = "";
         static readonly ILog debugLog = LogManager.GetLogger("Automated Testing Logs");
-        readonly Actions action; 
+        readonly Actions action;
+        private readonly WindowProcessHandler handler;
+        readonly int i = 0;
         public DocumentCollect(WiniumMethods m, Actions action) {
             this.m = m;
             this.action = action;
+            handler = new WindowProcessHandler(); 
         }
 
         /// <summary> This method is going to add documents to batch review and then run through and both add a document to an existing document and attribute a new one.</summary>
-        public void BatchReview() {
+        public void BatchReview(TestCaseObject tcase) {
+            pt(i); 
             method = MethodBase.GetCurrentMethod().Name;
             AddDocsToCollector();
-
+           
             window = m.Locate(By.Id("frmIntactMain"));
-
+            handler.GetActiveWindow();
+            var mainIntact = handler.WindowProcess; 
             window = m.Locate(By.Id("radPanelBar1"), window);
             window = m.Locate(By.Id("pageIntact"), window);
             window = m.Locate(By.Id("lstIntact"), window);
             m.Click(By.Name("Batch Review"), window);
+            Thread.Sleep(1000); 
             m.Click(By.Id("6"));
             Thread.Sleep(1000);
             m.Click(By.Id("6"));
 
 
             //attribute test from batch review...
-            BatchAttribution();
+            BatchCreate(tcase);
 
             //add to document test from batch review... 
             AddDocBatchReview();
 
             m.Click(By.Id("btnClose"));
+            handler.SetAsActiveWindow(mainIntact);
+            pt(i);
         }
         private void AddDocBatchReview() {
+            Thread.Sleep(2000);
+
+            pt(i); 
             m.Click(By.Id("btnAddToDoc"));
+            pt(i);
             m.Click(By.Name("DEFAULT DEF"));
-            m.Click(By.Name("DEFAULT DEFINITION TEST"));
-            m.Click(By.Id("rbtnOK"));
-            Thread.Sleep(2000);
-            m.Locate(By.Name("&OK"));
-            Thread.Sleep(2000);
+            action.MoveByOffset(300, 0).DoubleClick().Build().Perform();
+            Thread.Sleep(4000);
+
             window = m.Locate(By.Id("frmInsertPagesVersion"));
             m.Click(By.Id("btnOK"), window);
             m.Locate(By.Id("frmDocument"));
 
-            //rotate 
-            Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            m.Click(By.Id("lblType"));
-            Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            action.MoveByOffset(375, -37).Click().Click().Click().Click().Click().Build().Perform();
-            Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-
             //custom fields
-            Print(method, "custom fields");
             m.Click(By.Id("lblType"));
             action.MoveByOffset(150, 240).Click().SendKeys("1/1/2000").
-                MoveByOffset(0, 20).Click().SendKeys("10").MoveByOffset(0, 20).Click().SendKeys("BATCH REVIEW ADD").Build().Perform();
+                MoveByOffset(0, 20).Click().SendKeys("10").Build().Perform();
 
             //edit fields
             Print(method, "edit fields ");
             m.Click(By.Id("lblType"));
-            action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("BATCH AUTHOR TEST").
-                MoveByOffset(0, 40).Click().SendKeys("BATCH ADDING TO ANOTHER DOCUMENT TEST").Build().Perform();
+            action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("BATCH ADD").
+                MoveByOffset(0, 40).Click().SendKeys("BATCH ADD TEST").Build().Perform();
 
             m.Click(By.Name("Save"));
-            m.Click(By.Name("Close"));
+            m.Click(By.Id("btnClose"));
         }
-        private void BatchAttribution() {
+
+        public void BatchCreate(TestCaseObject tcase) {
+            method = MethodBase.GetCurrentMethod().Name;
+            Print("Started", method);
+            Thread.Sleep(6000);
+            pt(i); 
             window = m.Locate(By.Id("frmBatchReview"));
+            if (m.IsElementPresent(By.Name("Maximize"), window)) {
+                m.Click(By.Name("Maximize"), window);
+            }
+            pt(i); 
+            handler.GetActiveWindow();
+            pt(i); 
             m.Click(By.Id("btnAttribute"), window);
             Thread.Sleep(2000);
-            window = m.Locate(By.Id("frmDocument"));
 
-            //rotate 
-            Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            DocumentObject document = new DocumentObject();
+
             m.Click(By.Id("lblType"));
-            Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
-            action.MoveByOffset(375, -37).Click().Click().Build().Perform();
-            Print(method, "x: " + Cursor.Position.X + " y: " + Cursor.Position.Y);
+            document.Type = "test";
+            document.Definition = "def";
 
-            //custom fields
-            Print(method, "custom fields");
+            action.MoveByOffset(30, 0).Click().SendKeys(document.Type).Build().Perform();
             m.Click(By.Id("lblType"));
-            action.MoveByOffset(150, 240).Click().SendKeys("1/1/2000").
-                MoveByOffset(0, 20).Click().SendKeys("10").MoveByOffset(0, 20).Click().SendKeys("BATCH REVIEW ATTRIBUTION").Build().Perform();
+            action.MoveByOffset(30, 27).Click().SendKeys(document.Definition).Build().Perform();
 
-            //edit fields
-            Print(method, "edit fields ");
+            //adding the metadata values
             m.Click(By.Id("lblType"));
-            action.MoveByOffset(170, 80).Click().SendKeys("1/1/2000").MoveByOffset(0, 20).Click().SendKeys("BATCH AUTHOR TEST").
-                MoveByOffset(0, 40).Click().SendKeys("BATCH ATTRIBUTING A DOCUMENT TEST").Build().Perform();
 
-            m.Click(By.Id("btnSave"), window);
-            m.Click(By.Id("btnClose"), window);
+            var date = DateTime.Now.Date;
+            var num = new Random().Next();
+            document.MetaData.AddData(date);
+            document.MetaData.AddData(num);
+            document.MetaData.AddData(document.DocumentId);
+            action.MoveByOffset(150, 240).Click().SendKeys(date.ToString()).
+                   MoveByOffset(0, 20).Click().SendKeys(num.ToString()).
+                   MoveByOffset(0, 20).Click().SendKeys(document.DocumentId).Build().Perform();
+
+                    //add author, expiration date, and summary
+            m.Click(By.Id("lblType"));
+            document.Author = "BATCH AUTHOR";
+            document.Summary = "BATCH SUMMARY";
+            action.MoveByOffset(170, 80).Click().SendKeys("1/1/2050").MoveByOffset(0, 20).Click().SendKeys(document.Author).
+                   MoveByOffset(0, 40).Click().SendKeys(document.Summary).Build().Perform();
+
+            //save and quit
+            m.Click(By.Id("btnSave"));
+            m.Click(By.Id("btnClose"));
+            pt(i); 
+            Print("Finished the document addition", method);
+            tcase.AddDocument(document);
+            new SQLDataHandler().ValidateDocumentAdd(document);
+            pt(i); 
         }
         /// <summary>
         /// Collects documents by all definition from InZone.
@@ -160,7 +189,11 @@ namespace ConsoleTests.src {
                 Print(method, "Starting or Ending path doesn't exist");
             }
         }
-        private void Print(string method, string toPrint) {
+        private static void pt(int i) {
+            i += 1; 
+            debugLog.Info("{" + i.ToString() + "} "+ DateTime.Now.Minute + ":" + DateTime.Now.Second + ":" + DateTime.Now.Millisecond); 
+        }
+        private void Print( string toPrint, string method = "") {
             debugLog.Info(method + " " + toPrint);
         }
     }
